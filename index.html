@@ -36,7 +36,12 @@
 
   <!-- Кнопка для ручного запуска -->
   <button id="ar-button" class="ar-button">
-    📱 Open AR
+    📱 Open AaR
+  </button>
+
+  <!-- Кнопка для открытия во внешнем браузере (Safari/Chrome), скрыта по умолчанию -->
+  <button id="open-browser" class="ar-button" style="display:none;">
+    🌐 Open in Safari/Chrome
   </button>
 
   <!-- 3D-предпросмотр (GLB) -->
@@ -75,6 +80,17 @@
       setTimeout(() => {
         hiddenBtn.click();
       }, 1500);
+    });
+
+    // Проверка: открыт ли сайт во встроенном браузере Instagram
+    const isInstagramBrowser = navigator.userAgent.includes("Instagram");
+    if (isInstagramBrowser) {
+      document.getElementById("open-browser").style.display = "inline-block";
+    }
+
+    // При клике открываем сайт во внешнем браузере
+    document.getElementById("open-browser").addEventListener("click", () => {
+      window.open(window.location.href, "_blank");
     });
   </script>
 </body>
