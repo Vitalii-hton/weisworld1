@@ -34,9 +34,9 @@
   <h1>AR Michael</h1>
   <p>iPhone/iPad only:</p>
 
-  <!-- Кнопка для ручного запуска -->
+  <!-- Кнопка для ручного запуска AR -->
   <button id="ar-button" class="ar-button">
-    📱 Open AaR
+    📱 Open AR
   </button>
 
   <!-- Кнопка для открытия во внешнем браузере (Safari/Chrome), скрыта по умолчанию -->
@@ -44,7 +44,7 @@
     🌐 Open in Safari/Chrome
   </button>
 
-  <!-- 3D-предпросмотр (GLB) -->
+  <!-- 3D-предпросмотр -->
   <model-viewer
     id="ar-viewer"
     src="https://vitalii-hton.github.io/weisworld1/halloween.glb"
@@ -64,12 +64,12 @@
     const arButton = document.getElementById('ar-button');
     const arViewer = document.getElementById('ar-viewer');
 
-    // обычная кнопка
+    // обычная кнопка запуска AR
     arButton.addEventListener('click', () => {
       arViewer.activateAR();
     });
 
-    // скрытая кнопка
+    // скрытая кнопка для автозапуска
     const hiddenBtn = document.getElementById('hidden-ar-button');
     hiddenBtn.addEventListener("click", () => {
       arViewer.activateAR();
@@ -82,16 +82,60 @@
       }, 1500);
     });
 
-    // Проверка: открыт ли сайт во встроенном браузере Instagram
-    const isInstagramBrowser = navigator.userAgent.includes("Instagram");
-    if (isInstagramBrowser) {
-      document.getElementById("open-browser").style.display = "inline-block";
-    }
+    // ===============================
+    // ЛОГИКА для кнопки "Open in Safari/Chrome"
+    // ===============================
+    (function() {
+      const openBtn = document.getElementById('open-browser');
+      const url = window.location.href; 
+      const ua = navigator.userAgent || '';
 
-    // При клике открываем сайт во внешнем браузере
-    document.getElementById("open-browser").addEventListener("click", () => {
-      window.open(window.location.href, "_blank");
-    });
+      // Определяем встроенный браузер (Instagram/FB)
+      const isInAppBrowser = /Instagram|FBAN|FBAV|FBSV|FB_IAB/i.test(ua);
+      if (!isInAppBrowser) {
+        openBtn.style.display = 'none';
+      } else {
+        openBtn.style.display = 'inline-block';
+      }
+
+      function tryOpen(urlToOpen) {
+        const a = document.createElement('a');
+        a.href = urlToOpen;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(()=>{ try { document.body.removeChild(a); } catch(e){} }, 2000);
+      }
+
+      function openInExternalBrowser() {
+        const xSafari = 'x-safari-https://' + url.replace(/^https?:\/\//i, '');
+        const safariTab = 'com-apple-mobilesafari-tab:' + url;
+        const intentUrl = 'intent://' + url.replace(/^https?:\/\//i, '') +
+                          '#Intent;scheme=https;package=com.android.chrome;end';
+
+        tryOpen(xSafari);                   // попытка 1 (iOS)
+        setTimeout(()=> tryOpen(safariTab), 300);   // попытка 2 (старый iOS)
+        setTimeout(()=> tryOpen(intentUrl), 700);   // попытка 3 (Android)
+        setTimeout(()=> tryOpen(url), 1100);        // fallback обычный
+        setTimeout(()=> {
+          try { window.open(url, '_blank', 'noopener'); } catch(e){}
+        }, 1400);
+      }
+
+      openBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        openInExternalBrowser();
+
+        // через 1.6с подсказка пользователю
+        setTimeout(()=> {
+          if (confirm('Если сайт всё ещё открыт внутри Instagram и AR не работает — открыть инструкцию, как запустить в Safari?')) {
+            window.location.href = '/open-in-safari-instructions.html';
+          }
+        }, 1600);
+      });
+    })();
   </script>
 </body>
 </html>
