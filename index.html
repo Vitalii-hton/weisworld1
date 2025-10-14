@@ -20,14 +20,6 @@
     .ar-button:hover {
       background-color: #0056b3;
     }
-    model-viewer {
-      width: 100%;
-      max-width: 600px;
-      height: 500px;
-      border-radius: 12px;
-      background: #f0f0f0;
-      margin-top: 20px;
-    }
   </style>
 </head>
 <body style="text-align:center; padding:50px; font-family:sans-serif;">
@@ -39,103 +31,20 @@
     📱 Open AR
   </button>
 
-  <!-- Кнопка для открытия во внешнем браузере (Safari/Chrome), скрыта по умолчанию -->
-  <button id="open-browser" class="ar-button" style="display:none;">
-    🌐 Open in Safari/Chrome
-  </button>
-
-  <!-- 3D-предпросмотр -->
-  <model-viewer
-    id="ar-viewer"
-    src="https://vitalii-hton.github.io/weisworld1/halloween.glb"
-    ios-src="https://vitalii-hton.github.io/weisworld1/halloween22.usdz"
-    alt="3D Model"
-    camera-controls
-    auto-rotate
-    ar
-    ar-modes="quick-look"
-    style="width:100%; height:500px;">
-  </model-viewer>
-
-  <!-- Скрытая кнопка для автозапуска -->
-  <button id="hidden-ar-button" style="display:none;"></button>
-
   <script>
     const arButton = document.getElementById('ar-button');
-    const arViewer = document.getElementById('ar-viewer');
 
-    // обычная кнопка запуска AR
     arButton.addEventListener('click', () => {
-      arViewer.activateAR();
+      // Создаем временный model-viewer, только для запуска AR
+      const modelViewer = document.createElement('model-viewer');
+      modelViewer.setAttribute('src', 'https://vitalii-hton.github.io/weisworld1/halloween.glb');
+      modelViewer.setAttribute('ios-src', 'https://vitalii-hton.github.io/weisworld1/halloween22.usdz');
+      modelViewer.setAttribute('ar', '');
+      modelViewer.setAttribute('ar-modes', 'quick-look');
+      modelViewer.style.display = 'none'; // не показываем предпросмотр на странице
+      document.body.appendChild(modelViewer);
+      modelViewer.activateAR();
     });
-
-    // скрытая кнопка для автозапуска
-    const hiddenBtn = document.getElementById('hidden-ar-button');
-    hiddenBtn.addEventListener("click", () => {
-      arViewer.activateAR();
-    });
-
-    // имитация клика по скрытой кнопке через 1.5 сек
-    window.addEventListener("load", () => {
-      setTimeout(() => {
-        hiddenBtn.click();
-      }, 1500);
-    });
-
-    // ===============================
-    // ЛОГИКА для кнопки "Open in Safari/Chrome"
-    // ===============================
-    (function() {
-      const openBtn = document.getElementById('open-browser');
-      const url = window.location.href; 
-      const ua = navigator.userAgent || '';
-
-      // Определяем встроенный браузер (Instagram/FB)
-      const isInAppBrowser = /Instagram|FBAN|FBAV|FBSV|FB_IAB/i.test(ua);
-      if (!isInAppBrowser) {
-        openBtn.style.display = 'none';
-      } else {
-        openBtn.style.display = 'inline-block';
-      }
-
-      function tryOpen(urlToOpen) {
-        const a = document.createElement('a');
-        a.href = urlToOpen;
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
-        a.style.display = 'none';
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(()=>{ try { document.body.removeChild(a); } catch(e){} }, 2000);
-      }
-
-      function openInExternalBrowser() {
-        const xSafari = 'x-safari-https://' + url.replace(/^https?:\/\//i, '');
-        const safariTab = 'com-apple-mobilesafari-tab:' + url;
-        const intentUrl = 'intent://' + url.replace(/^https?:\/\//i, '') +
-                          '#Intent;scheme=https;package=com.android.chrome;end';
-
-        tryOpen(xSafari);                   // попытка 1 (iOS)
-        setTimeout(()=> tryOpen(safariTab), 300);   // попытка 2 (старый iOS)
-        setTimeout(()=> tryOpen(intentUrl), 700);   // попытка 3 (Android)
-        setTimeout(()=> tryOpen(url), 1100);        // fallback обычный
-        setTimeout(()=> {
-          try { window.open(url, '_blank', 'noopener'); } catch(e){}
-        }, 1400);
-      }
-
-      openBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        openInExternalBrowser();
-
-        // через 1.6с подсказка пользователю
-        setTimeout(()=> {
-          if (confirm('Если сайт всё ещё открыт внутри Instagram и AR не работает — открыть инструкцию, как запустить в Safari?')) {
-            window.location.href = '/open-in-safari-instructions.html';
-          }
-        }, 1600);
-      });
-    })();
   </script>
 </body>
 </html>
