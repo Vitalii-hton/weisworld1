@@ -48,8 +48,7 @@
 <model-viewer
   id="ar-viewer"
   src="https://vitalii-hton.github.io/weisworld1/halloween.glb"
-  ios-src="https://vitalii-hton.github.io/weisworld1/halloween22.usdz#custom=https://vitalii-hton.github.io/weisworld1/banner.html&customHeight=small"
-  alt="3D Model"
+ ios-src="https://vitalii-hton.github.io/weisworld1/halloween22.usdz#custom=https://vitalii-hton.github.io/weisworld1/banner.html&customHeight=small"  alt="3D Model"
   camera-controls
   auto-rotate
   ar
@@ -136,13 +135,19 @@
         }, 1600);
       });
     })();
-  </script>
-  <!-- 🔽 ВСТАВЬ ЭТО СЮДА -->
   <script>
+    const targetUrl = 'https://www.weis.world/ua/campaign#join';
+
+    // Ловим нативное сообщение от Quick Look
     window.addEventListener('message', (event) => {
-      if (event.data === '_apple_ar_quicklook_button_tapped') {
-        window.open('https://www.weis.world/ua/campaign#join', '_blank');
+      if (event && event.data === '_apple_ar_quicklook_button_tapped') {
+        window.open(targetUrl, '_blank');
       }
+    });
+
+    // Для надёжности: model-viewer диспатчит событие quick-look-button-tapped
+    arViewer.addEventListener && arViewer.addEventListener('quick-look-button-tapped', () => {
+      window.open(targetUrl, '_blank');
     });
   </script>
 </body>
