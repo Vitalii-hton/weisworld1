@@ -1,68 +1,139 @@
-<!doctype html>
-<html lang="eng">
+<!DOCTYPE html>
+<html lang="ukr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AR Quick Look — Archangel Michael</title>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
   <style>
-    /* Подключаем шрифт Boldstorm */
-    @font-face {
-      font-family: 'Boldstorm';
-      src: url('https://raw.githubusercontent.com/Vitalii-hton/weisworld1/main/fonts/BoldstromD.otf') format('opentype');
-      font-weight: normal;
-      font-style: normal;
-    }
-
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: transparent;
-      height: 100%;
-      font-family: 'Boldstorm', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    }
-
-    /* затемнённый фон */
-    .overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.50);
-      backdrop-filter: blur(5px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* брендовая кнопка */
-    .btn {
-      background: #FFDC51; /* заменено на чистый брендовый цвет */
+    /* Стили кнопки */
+    .ar-button {
+      background-color: #007bff;
       color: white;
+      padding: 10px 20px;
       border: none;
-      border-radius: 12px;
-      padding: 14px 28px;
-      font-size: 18px;
-      font-weight: 600;
-      letter-spacing: 0.4px;
-      font-family: 'Boldstorm', sans-serif;
-      box-shadow: 0 4px 20px rgba(255, 45, 85, 0.35);
+      border-radius: 5px;
       cursor: pointer;
-      transition: all 0.3s ease;
+      font-size: 16px;
+      margin-top: 20px;
     }
-
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 24px rgba(255, 45, 85, 0.45);
-      opacity: 0.95;
+    .ar-button:hover {
+      background-color: #0056b3;
     }
-
-    .btn:active {
-      transform: translateY(0);
-      box-shadow: 0 2px 12px rgba(255, 45, 85, 0.25);
+    model-viewer {
+      width: 100%;
+      max-width: 600px;
+      height: 500px;
+      border-radius: 12px;
+      background: #f0f0f0;
+      margin-top: 20px;
     }
   </style>
 </head>
-<body>
-  <div class="overlay">
-    <button class="btn" aria-label="Form">Form</button>
-  </div>
+<body style="text-align:center; padding:50px; font-family:sans-serif;">
+  <h1>AR Michael</h1>
+  <p>iPhone/iPad only:</p>
+
+  <!-- Кнопка для ручного запуска AR -->
+  <button id="ar-button" class="ar-button">
+    📱 Open AR
+  </button>
+
+  <!-- Кнопка для открытия во внешнем браузере (Safari/Chrome), скрыта по умолчанию -->
+  <button id="open-browser" class="ar-button" style="display:none;">
+    🌐 Open in Safari/Chrome
+  </button>
+
+  <!-- 3D-предпросмотр -->
+  <model-viewer
+    id="ar-viewer"
+    src="https://vitalii-hton.github.io/weisworld1/halloween.glb"
+    ios-src="https://vitalii-hton.github.io/weisworld1/halloween22.usdz#callToAction=Join%20Campaign&checkoutTitle=Weis%20World&checkoutSubtitle=Join%20the%20movement&checkoutURL=https://www.weis.world/ua/campaign#join"
+    alt="3D Model"
+    camera-controls
+    auto-rotate
+    ar
+    ar-modes="quick-look"
+    style="width:100%; height:500px;">
+  </model-viewer>
+
+  <!-- Скрытая кнопка для автозапуска -->
+  <button id="hidden-ar-button" style="display:none;"></button>
+
+  <script>
+    const arButton = document.getElementById('ar-button');
+    const arViewer = document.getElementById('ar-viewer');
+
+    // обычная кнопка запуска AR
+    arButton.addEventListener('click', () => {
+      arViewer.activateAR();
+    });
+
+    // скрытая кнопка для автозапуска
+    const hiddenBtn = document.getElementById('hidden-ar-button');
+    hiddenBtn.addEventListener("click", () => {
+      arViewer.activateAR();
+    });
+
+    // имитация клика по скрытой кнопке через 1.5 сек
+    window.addEventListener("load", () => {
+      setTimeout(() => {
+        hiddenBtn.click();
+      }, 1500);
+    });
+
+    // ===============================
+    // ЛОГИКА для кнопки "Open in Safari/Chrome"
+    // ===============================
+    (function() {
+      const openBtn = document.getElementById('open-browser');
+      const url = window.location.href; 
+      const ua = navigator.userAgent || '';
+
+      // Определяем встроенный браузер (Instagram/FB)
+      const isInAppBrowser = /Instagram|FBAN|FBAV|FBSV|FB_IAB/i.test(ua);
+      if (!isInAppBrowser) {
+        openBtn.style.display = 'none';
+      } else {
+        openBtn.style.display = 'inline-block';
+      }
+
+      function tryOpen(urlToOpen) {
+        const a = document.createElement('a');
+        a.href = urlToOpen;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(()=>{ try { document.body.removeChild(a); } catch(e){} }, 2000);
+      }
+
+      function openInExternalBrowser() {
+        const xSafari = 'x-safari-https://' + url.replace(/^https?:\/\//i, '');
+        const safariTab = 'com-apple-mobilesafari-tab:' + url;
+        const intentUrl = 'intent://' + url.replace(/^https?:\/\//i, '') +
+                          '#Intent;scheme=https;package=com.android.chrome;end';
+
+        tryOpen(xSafari);                   // попытка 1 (iOS)
+        setTimeout(()=> tryOpen(safariTab), 300);   // попытка 2 (старый iOS)
+        setTimeout(()=> tryOpen(intentUrl), 700);   // попытка 3 (Android)
+        setTimeout(()=> tryOpen(url), 1100);        // fallback обычный
+        setTimeout(()=> {
+          try { window.open(url, '_blank', 'noopener'); } catch(e){}
+        }, 1400);
+      }
+
+      openBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        openInExternalBrowser();// через 1.6с подсказка пользователю
+        setTimeout(()=> {
+          if (confirm('Если сайт всё ещё открыт внутри Instagram и AR не работает — открыть инструкцию, как запустить в Safari?')) {
+            window.location.href = '/open-in-safari-instructions.html';
+          }
+        }, 1600);
+      });
+    })();
+  </script>
 </body>
 </html>
