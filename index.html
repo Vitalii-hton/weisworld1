@@ -48,7 +48,7 @@
   <model-viewer
     id="ar-viewer"
     src="https://vitalii-hton.github.io/weisworld1/halloween.glb"
-    ios-src="https://vitalii-hton.github.io/weisworld1/try6.usdz"
+    ios-src="https://vitalii-hton.github.io/weisworld1/halloween22.usdz"
     alt="3D Model"
     camera-controls
     auto-rotate
@@ -127,7 +127,6 @@
       openBtn.addEventListener('click', (e) => {
         e.preventDefault();
         openInExternalBrowser();
-
         // через 1.6с подсказка пользователю
         setTimeout(()=> {
           if (confirm('Если сайт всё ещё открыт внутри Instagram и AR не работает — открыть инструкцию, как запустить в Safari?')) {
@@ -136,20 +135,6 @@
         }, 1600);
       });
     })();
-  <script>
-    const targetUrl = 'https://www.weis.world/ua/campaign#join';
-
-    // Ловим нативное сообщение от Quick Look
-    window.addEventListener('message', (event) => {
-      if (event && event.data === '_apple_ar_quicklook_button_tapped') {
-        window.open(targetUrl, '_blank');
-      }
-    });
-
-    // Для надёжности: model-viewer диспатчит событие quick-look-button-tapped
-    arViewer.addEventListener && arViewer.addEventListener('quick-look-button-tapped', () => {
-      window.open(targetUrl, '_blank');
-    });
   </script>
 </body>
 </html>
