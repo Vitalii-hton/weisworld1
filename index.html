@@ -48,7 +48,7 @@
   <model-viewer
     id="ar-viewer"
     src="https://vitalii-hton.github.io/weisworld1/halloween.glb"
-    ios-src="https://vitalii-hton.github.io/weisworld1/halloween22.usdz"
+    ios-src="https://vitalii-hton.github.io/weisworld1/halloween22.usdz"#checkoutTitle=Moon%20X&checkoutSubtitle=Hello%20Kitty&price=%2419.99&callToAction=%D0%9A%D1%83%D0%BF%D0%B8%D1%82%D1%8C">
     alt="3D Model"
     camera-controls
     auto-rotate
@@ -135,6 +135,16 @@
         }, 1600);
       });
     })();
+    // ===============================
+  // 👉 ДОБАВЬ ВОТ ЭТОТ БЛОК
+  // ===============================
+  const viewer = document.getElementById('ar-viewer');
+  viewer.addEventListener('quick-look-button-tapped', () => {
+    window.open(
+      'https://moonoralbeauty.com/products/moon-x-hello-kitty%C2%AE-teeth-whitening-pen-duo',
+      '_blank'
+    );
+  });
   </script>
 </body>
 </html>
