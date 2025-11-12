@@ -82,60 +82,59 @@
       }, 1500);
     });
 
-    // ===============================
-    // ЛОГИКА для кнопки "Open in Safari/Chrome"
-    // ===============================
-    (function() {
-      const openBtn = document.getElementById('open-browser');
-      const url = window.location.href; 
-      const ua = navigator.userAgent || '';
+  // ===============================
+  // ЛОГИКА для кнопки "Open in Safari/Chrome"
+  // ===============================
+  (function() {
+    const openBtn = document.getElementById('open-browser');
+    const url = window.location.href; 
+    const ua = navigator.userAgent || '';
 
-      // Определяем встроенный браузер (Instagram/FB)
-      const isInAppBrowser = /Instagram|FBAN|FBAV|FBSV|FB_IAB/i.test(ua);
-      if (!isInAppBrowser) {
-        openBtn.style.display = 'none';
-      } else {
-        openBtn.style.display = 'inline-block';
-      }
+    const isInAppBrowser = /Instagram|FBAN|FBAV|FBSV|FB_IAB/i.test(ua);
+    if (!isInAppBrowser) {
+      openBtn.style.display = 'none';
+    } else {
+      openBtn.style.display = 'inline-block';
+    }
 
-      function tryOpen(urlToOpen) {
-        const a = document.createElement('a');
-        a.href = urlToOpen;
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
-        a.style.display = 'none';
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(()=>{ try { document.body.removeChild(a); } catch(e){} }, 2000);
-      }
+    function tryOpen(urlToOpen) {
+      const a = document.createElement('a');
+      a.href = urlToOpen;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(()=>{ try { document.body.removeChild(a); } catch(e){} }, 2000);
+    }
 
-      function openInExternalBrowser() {
-        const xSafari = 'x-safari-https://' + url.replace(/^https?:\/\//i, '');
-        const safariTab = 'com-apple-mobilesafari-tab:' + url;
-        const intentUrl = 'intent://' + url.replace(/^https?:\/\//i, '') +
-                          '#Intent;scheme=https;package=com.android.chrome;end';
+    function openInExternalBrowser() {
+      const xSafari = 'x-safari-https://' + url.replace(/^https?:\/\//i, '');
+      const safariTab = 'com-apple-mobilesafari-tab:' + url;
+      const intentUrl = 'intent://' + url.replace(/^https?:\/\//i, '') +
+                        '#Intent;scheme=https;package=com.android.chrome;end';
 
-        tryOpen(xSafari);                   // попытка 1 (iOS)
-        setTimeout(()=> tryOpen(safariTab), 300);   // попытка 2 (старый iOS)
-        setTimeout(()=> tryOpen(intentUrl), 700);   // попытка 3 (Android)
-        setTimeout(()=> tryOpen(url), 1100);        // fallback обычный
-        setTimeout(()=> {
-          try { window.open(url, '_blank', 'noopener'); } catch(e){}
-        }, 1400);
-      }
+      tryOpen(xSafari);
+      setTimeout(()=> tryOpen(safariTab), 300);
+      setTimeout(()=> tryOpen(intentUrl), 700);
+      setTimeout(()=> tryOpen(url), 1100);
+      setTimeout(()=> {
+        try { window.open(url, '_blank', 'noopener'); } catch(e){}
+      }, 1400);
+    }
 
-      openBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        openInExternalBrowser();
-        // через 1.6с подсказка пользователю
-        setTimeout(()=> {
-          if (confirm('Если сайт всё ещё открыт внутри Instagram и AR не работает — открыть инструкцию, как запустить в Safari?')) {
-            window.location.href = '/open-in-safari-instructions.html';
-          }
-        }, 1600);
-      });
-    })();
-    // ===============================
+    openBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      openInExternalBrowser();
+      setTimeout(()=> {
+        if (confirm('Если сайт всё ещё открыт внутри Instagram и AR не работает — открыть инструкцию, как запустить в Safari?')) {
+          window.location.href = '/open-in-safari-instructions.html';
+        }
+      }, 1600);
+    });
+  })();
+
+  // ===============================
   // 👉 ДОБАВЬ ВОТ ЭТОТ БЛОК
   // ===============================
   const viewer = document.getElementById('ar-viewer');
@@ -145,6 +144,6 @@
       '_blank'
     );
   });
-  </script>
+</script>
 </body>
 </html>
